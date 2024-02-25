@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import { Switch, Appearance } from "react-native";
-
+import { Foundation } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
@@ -20,10 +20,11 @@ export default function TabLayout() {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => {
     setIsEnabled((previousState) => !previousState);
-    Appearance.setColorScheme('dark');
+    // Appearance.setColorScheme("dark");
   };
-  Appearance.addChangeListener((state)=>{console.log(state);
-  })
+  Appearance.addChangeListener((state) => {
+    console.log(state);
+  });
   return (
     <Tabs
       screenOptions={{
@@ -46,22 +47,27 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Time",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-         
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="clock-o" color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="date"
         options={{
-          title: "Date",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: "Calendar",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="calendar-o" color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="about"
         options={{
           title: "About",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="exclamation-circle" color={color} />
+          ),
         }}
       />
     </Tabs>
