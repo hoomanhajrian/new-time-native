@@ -1,11 +1,13 @@
-import { StyleSheet } from 'react-native';
-import { View } from '@/components/Themed';
-import CalendarComponent from '@/app/components/CalendarComponent';
+import { StyleSheet } from "react-native";
+import { View } from "@/components/Themed";
+import CalendarComponent from "@/components/CalendarComponent";
+import NewCalendar from "@/components/NewCalendar";
 
 export default function TabTwoScreen() {
   return (
     <View style={styles.container}>
-      <CalendarComponent/>
+      <CalendarComponent />
+      <NewCalendar />
     </View>
   );
 }
@@ -13,7 +15,7 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 0,
-    width:'100%',
+    width: "100%",
     backgroundColor: "#fff",
-  }
+  },
 });
