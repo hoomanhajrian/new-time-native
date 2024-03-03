@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import { Switch, Appearance } from "react-native";
-import { Foundation } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
@@ -17,14 +17,19 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [darkMode, setIsEnabled] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  // const appLightModeState = useSelector(appLightModeState);
   const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-    // Appearance.setColorScheme("dark");
+    setIsEnabled((preState) => !darkMode);
   };
-  Appearance.addChangeListener((state) => {
-    console.log(state);
-  });
+
+  useEffect(() => {
+    darkMode
+      ? Appearance.setColorScheme("light")
+      : Appearance.setColorScheme("dark");
+  }, [darkMode]);
+
   return (
     <Tabs
       screenOptions={{
@@ -35,10 +40,10 @@ export default function TabLayout() {
         headerRight: () => (
           <Switch
             trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+            thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
-            value={isEnabled}
+            value={darkMode}
           />
         ),
       }}
