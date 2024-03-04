@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-import { Switch } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { Switch, Text, View } from "react-native";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import { darkMode, lightMode } from "@/redux/slices/appSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSelector, useDispatch, getAppModeState, appSlice } from "../redux";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -19,17 +18,18 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [isEnabled, setIsEnabled] = useState<boolean>(false);
-  // const isEnabled = useSelector();
+  const appMode = useSelector(getAppModeState);
+
   const dispatch = useDispatch();
 
   // switch functionality
-  const toggleSwitch = (state: any) => {
-    console.log(state);
+  const toggleSwitch = (dark: any) => {
+    dark
+      ? dispatch(appSlice.actions.darkMode())
+      : dispatch(appSlice.actions.lightMode());
   };
 
-  const storeData = async (value: string) => {
-    value === "active" ? dispatch(darkMode()) : dispatch(lightMode());
+  const storeAppMode = async (value: string) => {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem("dark-mode", jsonValue);
@@ -38,41 +38,83 @@ export default function TabLayout() {
     }
   };
 
-  const getData = async () => {
+  const getAppMode = async () => {
     try {
       const value = await AsyncStorage.getItem("dark-mode");
-      if (value !== null) {
-        value === "active" ? dispatch(darkMode()) : dispatch(lightMode());
-      } else {
-        dispatch(lightMode());
-      }
+      console.log(value);
+
+      // if (value !== null) {
+      //   value === "active"
+      //     ? dispatch(appSlice.actions.darkMode())
+      //     : dispatch(appSlice.actions.lightMode());
+      // } else {
+      //   dispatch(appSlice.actions.lightMode());
+      // }
     } catch (e) {
       // error reading value
     }
   };
 
   useEffect(() => {
-    isEnabled ? storeData("active") : storeData("inactive");
-  }, [isEnabled]);
+    appMode === "dark" ? storeAppMode("active") : storeAppMode("inactive");
+  }, [appMode]);
 
   useEffect(() => {
-    getData();
+    getAppMode();
   }, []);
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
+        tabBarActiveTintColor:
+          appMode === "dark"
+            ? Colors.dark.tabIconDefault
+            : Colors.light.tabIconSelected,
+        tabBarActiveBackgroundColor: appMode === "dark" ? "black" : "lightblue",
+        tabBarInactiveBackgroundColor:
+          appMode === "dark" ? "black" : "lightblue",
+        headerTintColor: appMode === "dark" ? "white" : "black",
         headerShown: useClientOnlyValue(false, true),
+        headerStyle: {
+          backgroundColor:
+            appMode === "dark"
+              ? Colors.dark.background
+              : Colors.light.background,
+        },
         headerRight: () => (
-          <Switch
-            trackColor={{ false: "#81b0ff", true: "#767577" }}
-            thumbColor={isEnabled ? "#f4f3f4" : "#f5dd4b"}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleSwitch}
-            value={isEnabled}
-          />
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            {appMode === "dark" ? (
+              <Text
+                style={{
+                  color: Colors.dark.text,
+                  marginRight: 5,
+                }}
+              >
+                Theme: Dark
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  color: Colors.light.text,
+                  marginRight: 5,
+                }}
+              >
+                Theme: Light
+              </Text>
+            )}
+            <Switch
+              trackColor={{ false: "#81b0ff", true: "#767577" }}
+              thumbColor={appMode === "dark" ? "#f4f3f4" : "#f5dd4b"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitch}
+              value={appMode === "dark" ? true : false}
+            />
+          </View>
         ),
       }}
     >

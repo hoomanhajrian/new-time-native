@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Provider } from "react-redux";
-import { store } from "@/redux/store";
+import { reduxStore } from "./redux";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -45,7 +45,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <Provider store={store}>
+    <Provider store={reduxStore}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>

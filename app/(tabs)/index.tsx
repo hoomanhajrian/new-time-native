@@ -1,18 +1,20 @@
 import { StyleSheet, useColorScheme, ViewStyle } from "react-native";
 import { View } from "@/components/Themed";
 import TimeComponent from "../../components/TimeComponent";
+import { getAppModeState, useSelector } from "../redux";
+import Colors from "@/constants/Colors";
 
 const TabOneScreen = () => {
-  const colorScheme = useColorScheme();
+  const appMode = useSelector(getAppModeState);
 
   const styles =
-    colorScheme === "light"
+    appMode === "light"
       ? StyleSheet.create({
           container: {
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "white",
+            backgroundColor: Colors.light.background,
           },
         })
       : StyleSheet.create({
@@ -20,7 +22,7 @@ const TabOneScreen = () => {
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#000",
+            backgroundColor: Colors.dark.background,
           },
         });
 
