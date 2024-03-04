@@ -1,34 +1,34 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, useColorScheme, ViewStyle } from "react-native";
 import { View } from "@/components/Themed";
-import TimeComponent from "../components/TimeComponent";
+import TimeComponent from "../../components/TimeComponent";
 
-export default function TabOneScreen() {
+const TabOneScreen = () => {
+  const colorScheme = useColorScheme();
+
+  const styles =
+    colorScheme === "light"
+      ? StyleSheet.create({
+          container: {
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "white",
+          },
+        })
+      : StyleSheet.create({
+          container: {
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#000",
+          },
+        });
+
   return (
     <View style={styles.container}>
-
       <TimeComponent />
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-});
+export default TabOneScreen;

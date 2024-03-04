@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-import { Switch, Appearance } from "react-native";
-import { useDispatch } from "react-redux";
+import { Switch } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { darkMode, lightMode } from "@/redux/slices/appSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -17,19 +19,45 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [darkMode, setIsEnabled] = useState<boolean>(false);
+  const [isEnabled, setIsEnabled] = useState<boolean>(false);
+  // const isEnabled = useSelector();
   const dispatch = useDispatch();
-  // const appLightModeState = useSelector(appLightModeState);
-  const toggleSwitch = () => {
-    setIsEnabled((preState) => !darkMode);
+
+  // switch functionality
+  const toggleSwitch = (state: any) => {
+    console.log(state);
+  };
+
+  const storeData = async (value: string) => {
+    value === "active" ? dispatch(darkMode()) : dispatch(lightMode());
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("dark-mode", jsonValue);
+    } catch (e) {
+      // saving error
+    }
+  };
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("dark-mode");
+      if (value !== null) {
+        value === "active" ? dispatch(darkMode()) : dispatch(lightMode());
+      } else {
+        dispatch(lightMode());
+      }
+    } catch (e) {
+      // error reading value
+    }
   };
 
   useEffect(() => {
-    darkMode
-      ? Appearance.setColorScheme("light")
-      : Appearance.setColorScheme("dark");
-  }, [darkMode]);
+    isEnabled ? storeData("active") : storeData("inactive");
+  }, [isEnabled]);
 
+  useEffect(() => {
+    getData();
+  }, []);
   return (
     <Tabs
       screenOptions={{
@@ -39,11 +67,11 @@ export default function TabLayout() {
         headerShown: useClientOnlyValue(false, true),
         headerRight: () => (
           <Switch
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
+            trackColor={{ false: "#81b0ff", true: "#767577" }}
+            thumbColor={isEnabled ? "#f4f3f4" : "#f5dd4b"}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
-            value={darkMode}
+            value={isEnabled}
           />
         ),
       }}
